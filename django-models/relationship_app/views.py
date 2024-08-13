@@ -27,7 +27,14 @@ class LibraryDetailView(ListView):
 
 
 def register(request):
-  pass
+  if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+  else:
+      form = UserCreationForm()
+  return render(request, 'relationship_app/register.html', {'form': form})
 
 class LoginView(LoginView):
     template_name = 'login.html'
