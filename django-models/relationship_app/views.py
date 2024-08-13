@@ -49,7 +49,7 @@ class RegisterView(CreateView):
     template_name = 'register.html'
     success_url = reverse_lazy('login')
 
-class AdminView(TemplateView):
+class Admin(TemplateView):
   template_name = 'admin_view.html'
 
   def is_admin(user):
