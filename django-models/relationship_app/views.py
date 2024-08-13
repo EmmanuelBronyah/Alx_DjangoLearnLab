@@ -49,15 +49,13 @@ class RegisterView(CreateView):
     template_name = 'register.html'
     success_url = reverse_lazy('login')
 
-class Admin(TemplateView):
-  template_name = 'admin_view.html'
 
-  def is_admin(user):
-      return user.userprofile.role == 'Admin'
+def is_admin(user):
+    return user.userprofile.role == 'Admin'
 
-  @user_passes_test(is_admin)
-  def admin_view(request):
-      return render(request, 'admin_view.html')
+@user_passes_test(is_admin)
+def Admin(request):
+    return render(request, 'admin_view.html')
 
 def is_librarian(user):
     return user.userprofile.role == 'Librarian'
