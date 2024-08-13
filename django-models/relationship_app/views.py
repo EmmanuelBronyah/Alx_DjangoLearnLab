@@ -26,6 +26,9 @@ class LibraryDetailView(ListView):
         return context
 
 
+def register(request):
+  pass
+
 class LoginView(LoginView):
     template_name = 'login.html'
 
