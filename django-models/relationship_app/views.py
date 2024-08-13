@@ -48,3 +48,19 @@ class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'register.html'
     success_url = reverse_lazy('login')
+
+
+def check_role(user, role):
+    return user.is_authenticated and user.userprofile.role == role
+
+@user_passes_test(lambda user: check_role(user, 'Admin'))
+def admin_view(request):
+    return render(request, 'admin_view.html')
+
+@user_passes_test(lambda user: check_role(user, 'Librarian'))
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+@user_passes_test(lambda user: check_role(user, 'Member'))
+def member_view(request):
+    return render(request, 'member_view.html')
