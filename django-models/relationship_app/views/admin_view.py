@@ -1,9 +1,12 @@
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic import TemplateView
 
-def check_role(user):
-    return user.is_authenticated and user.userprofile.role == 'Admin'
+class RoleRequiredMixin(UserPassesTestMixin):
+    role = None
 
-@user_passes_test(check_role)
-def admin_view(request):
-    return render(request, 'admin_view.html')
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.userprofile.role == self.role
+
+class AdminView(RoleRequiredMixin, TemplateView):
+    template_name = 'admin_view.html'
+    role = 'Admin'
