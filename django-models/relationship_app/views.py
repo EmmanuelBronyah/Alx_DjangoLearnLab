@@ -8,8 +8,6 @@ from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic import TemplateView
 
 
 
@@ -51,17 +49,3 @@ class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'register.html'
     success_url = reverse_lazy('login')
-
-class RoleRequiredMixin(UserPassesTestMixin):
-    role = None
-
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.userprofile.role == self.role
-
-class AdminView(RoleRequiredMixin, TemplateView):
-    template_name = 'admin_view.html'
-    role = 'Admin'
-
-class LibrarianView(RoleRequiredMixin, TemplateView):
-    template_name = 'librarian_view.html'
-    role = 'Librarian'
