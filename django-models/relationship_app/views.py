@@ -8,8 +8,21 @@ from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import user_passes_test
+from .admin_view import check_role_admin
+from .librarian_view import check_role_librarian
+from .member_view import check_role_member
 
+@user_passes_test(check_role_admin)
+def admin_view(request):
+    return render(request, 'admin_view.html')
 
+@user_passes_test(check_role_librarian)
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+@user_passes_test(check_role_member)
+def member_view(request):
+    return render(request, 'member_view.html')
 
 def list_books(request):
   books = Book.objects.all()
