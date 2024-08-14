@@ -8,6 +8,9 @@ from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic import TemplateView
+
 
 
 def list_books(request):
@@ -49,18 +52,16 @@ class RegisterView(CreateView):
     template_name = 'register.html'
     success_url = reverse_lazy('login')
 
+class RoleRequiredMixin(UserPassesTestMixin):
+    role = None
 
-def check_role(user, role):
-    return user.is_authenticated and user.userprofile.role == role
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.userprofile.role == self.role
 
-@user_passes_test(lambda user: check_role(user, 'Admin'))
-def admin_view(request):
-    return render(request, 'admin_view.html')
+class AdminView(RoleRequiredMixin, TemplateView):
+    template_name = 'admin_view.html'
+    role = 'Admin'
 
-@user_passes_test(lambda user: check_role(user, 'Librarian'))
-def librarian_view(request):
-    return render(request, 'librarian_view.html')
-
-@user_passes_test(lambda user: check_role(user, 'Member'))
-def member_view(request):
-    return render(request, 'member_view.html')
+class LibrarianView(RoleRequiredMixin, TemplateView):
+    template_name = 'librarian_view.html'
+    role = 'Librarian'
