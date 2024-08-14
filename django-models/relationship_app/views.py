@@ -10,27 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic import TemplateView
-from .admin_view import check_role_admin
-from .librarian_view import check_role_librarian
-from .member_view import check_role_member
 
-class AdminView(UserPassesTestMixin, TemplateView):
-    template_name = 'admin_view.html'
-
-    def test_func(self):
-        return check_role_admin(self.request.user)
-
-class LibrarianView(UserPassesTestMixin, TemplateView):
-    template_name = 'librarian_view.html'
-
-    def test_func(self):
-        return check_role_librarian(self.request.user)
-
-class MemberView(UserPassesTestMixin, TemplateView):
-    template_name = 'member_view.html'
-
-    def test_func(self):
-        return check_role_member(self.request.user)
 
 def list_books(request):
   books = Book.objects.all()
