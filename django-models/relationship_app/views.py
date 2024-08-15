@@ -3,13 +3,8 @@ from .models import Book, Library
 from .models import Library
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic import TemplateView
 
 
 def list_books(request):
@@ -43,9 +38,3 @@ class LoginView(LoginView):
 
 class LogoutView(LogoutView):
     template_name = 'logout.html'
-
-class RegisterView(CreateView):
-    model = User
-    form_class = UserCreationForm
-    template_name = 'register.html'
-    success_url = reverse_lazy('login')
