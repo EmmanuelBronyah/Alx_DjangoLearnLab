@@ -1,8 +1,6 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic import TemplateView
+def check_role(user, role):
+  return user.is_authenticated and user.userprofile.role == role
 
-class AdminView(UserPassesTestMixin, TemplateView):
-    template_name = 'relationship_app/admin_view.html'
-
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.userprofile.role == 'Admin'
+@user_passes_test(lambda user: check_role(user, 'Admin'))
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
