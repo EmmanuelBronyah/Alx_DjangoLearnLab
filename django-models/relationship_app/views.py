@@ -5,6 +5,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.decorators import user_passes_test
 
 
 def list_books(request):
@@ -38,3 +39,19 @@ class LoginView(LoginView):
 
 class LogoutView(LogoutView):
     template_name = 'logout.html'
+
+
+def check_role(user, role):
+  return user.is_authenticated and user.userprofile.role == role
+
+@user_passes_test(lambda user: check_role(user, 'Admin'))
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+@user_passes_test(lambda user: check_role(user, 'Librarian'))
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+@user_passes_test(lambda user: check_role(user, 'Member'))
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
