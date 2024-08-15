@@ -4,4 +4,4 @@ def check_role(user, role):
 
 @user_passes_test(lambda user: check_role(user, 'Admin'))
 def admin_view(request):
-    return render(request, 'admin_view.html')
+    return render(request, 'relationship_app/admin_view.html')
