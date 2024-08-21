@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add book</title>
+    <title>Form Example</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Delete book</h1>
+    <h1>Add book</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Delete book</button>
+        <button type="submit">Create book</button>
     </form>
 </body>
 </html>
