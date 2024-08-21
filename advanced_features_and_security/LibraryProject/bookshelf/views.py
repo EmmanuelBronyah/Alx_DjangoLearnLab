@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book
+from .forms import ExampleForm
 
 @permission_required('bookshelf.can_view', raise_exception=True)
 def view_book(request, book_id):
@@ -37,3 +38,11 @@ def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book)
     book.delete()
     return redirect('list-book')
+
+def example_view(request):
+  if request.method == 'POST':
+      title = request.POST['title']
+      author = request.POST['author']
+      book = Book.objects.create(title=title, author=author)
+      return redirect('list_book', book_id=book.id)
+  return render(request, 'bookshelf/form_example.html')
