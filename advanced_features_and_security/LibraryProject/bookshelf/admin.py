@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import Book
-from django.contrib.auth.admin import ModelAdmin
+from django.contrib.admin import ModelAdmin
 from .models import CustomUser
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 class CustomUserAdmin(ModelAdmin):
     model = CustomUser
