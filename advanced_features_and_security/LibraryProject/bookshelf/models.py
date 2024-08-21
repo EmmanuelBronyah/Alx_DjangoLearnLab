@@ -36,6 +36,7 @@ class Book(models.Model):
             ('can_create', 'Can create book'),
             ('can_edit', 'Can edit book'),
             ('can_delete', 'Can delete book'),
+            ('can_list', 'Can list book'),
         ]
 
   def __str__(self):

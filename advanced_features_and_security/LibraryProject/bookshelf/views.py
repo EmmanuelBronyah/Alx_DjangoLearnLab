@@ -6,6 +6,12 @@ from .models import Book
 def view_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, 'bookshelf/view_book.html', {'book': book})
+  
+@permission_required('bookshelf.can_list', raise_exception=True)
+def book_list(request):
+  books = Book.objects.all()
+  context = {"books": books}
+  return render(request, "bookshelf/list_books.html", context)
 
 @permission_required('bookshelf.can_create', raise_exception=True)
 def create_book(request):
@@ -30,4 +36,4 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book)
     book.delete()
-    return redirect('create-book')
+    return redirect('list-book')
