@@ -6,7 +6,7 @@ from .serializers import BookSerializer
 from rest_framework.filters import SearchFilter
 from rest_framework.filters import OrderingFilter
 from rest_framework.exceptions import ValidationError
-from django_filters import filters
+from django_filters import rest_framework, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 
