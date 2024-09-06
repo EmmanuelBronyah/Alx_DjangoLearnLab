@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Book, Author
 
 
-class BookSerializer(serializers.Serializer):
+class BookSerializer(serializers.ModelSerializer):
   """
     BookSerializer serializes book details and includes validation to ensure
     the publication year is not in the future.
