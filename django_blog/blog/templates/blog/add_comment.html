@@ -7,14 +7,14 @@
 </head>
 <body>
   {% if view.object %}
-    <h2>{{ view.object.title }}</h2>
+    <h2>{{ view.object.content }}</h2>
   {% else %}
-    <h2>Create New Post</h2>
+    <h2>Add Comment</h2>
   {% endif %}
   <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
+    <button type="submit">Submit</button>
   </form>
 </body>
 </html>
