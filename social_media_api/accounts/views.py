@@ -65,22 +65,3 @@ class UnfollowUser(generics.GenericAPIView):
         
         request.user.following.remove(user_to_unfollow)
         return Response({"success": f"You have unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
-    
-
-class UserFeedView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostSerializer
-
-    def get_queryset(self):
-        # Get the current user
-        user = self.request.user
-        following_users = user.following.all()
-        ordered_posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
-        return ordered_posts
-
-    def list(self, request, *args, **kwargs):
-        # Get the queryset of posts from followed users
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
