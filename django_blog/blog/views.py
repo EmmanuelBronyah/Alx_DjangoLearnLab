@@ -154,6 +154,20 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == comment.author
 
 
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/posts_by_tag.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        return Post.objects.filter(tags__slug=tag_slug)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = Tag.objects.get(slug=self.kwargs.get('tag_slug'))
+        return context
+
 def search_posts(request):
     query = request.GET.get('q')
     if query:
@@ -170,11 +184,6 @@ def search_posts(request):
         'query': query
     }
     return render(request, 'blog/search_results.html', context)
-
-def posts_by_tag(request, tag_name):
-    posts = Post.objects.filter(tags__name=tag_name)
-    context = {'posts': posts, 'tag_name': tag_name}
-    return render(request, 'blog/posts_by_tag.html', context)
 
 def logout_view(request):
     logout(request)
