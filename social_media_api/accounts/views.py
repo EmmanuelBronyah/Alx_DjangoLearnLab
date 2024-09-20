@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework import generics
 from posts.models import Post
 from posts.serializers import PostSerializer
+from rest_framework import permissions
 
 
 class RegisterView(APIView):
@@ -41,7 +42,8 @@ class ProfileView(APIView):
 
 
 class FollowUser(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
@@ -52,7 +54,8 @@ class FollowUser(APIView):
         return Response({"success": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
 
 class UnfollowUser(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
         user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
