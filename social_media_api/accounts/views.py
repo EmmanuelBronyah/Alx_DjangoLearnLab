@@ -67,7 +67,7 @@ class UnfollowUser(generics.GenericAPIView):
         return Response({"success": f"You have unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
     
 
-class UserFeed(generics.ListAPIView):
+class UserFeedView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
 
@@ -75,7 +75,8 @@ class UserFeed(generics.ListAPIView):
         # Get the current user
         user = self.request.user
         following_users = user.following.all()
-        return Post.objects.filter(author__in=following_users).order_by('-created_at')
+        ordered_posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        return ordered_posts
 
     def list(self, request, *args, **kwargs):
         # Get the queryset of posts from followed users
