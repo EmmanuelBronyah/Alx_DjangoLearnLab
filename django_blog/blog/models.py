@@ -6,7 +6,7 @@ from taggit.managers import TaggableManager
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=50, unique=True, default='default-slug')
 
     def save(self, *args, **kwargs):
         if not self.slug:
