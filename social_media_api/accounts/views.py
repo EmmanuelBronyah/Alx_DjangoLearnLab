@@ -3,11 +3,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from django.contrib.auth import get_user_model
 from .serializers import UserRegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
+from .models import CustomUser
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework import generics
+from posts.models import Post
+from posts.serializers import PostSerializer
 
-User = get_user_model()
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -34,3 +38,35 @@ class ProfileView(APIView):
             'followers': user.followers.count(),
         }
         return Response(data, status=200)
+
+
+class FollowUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(CustomUser, id=user_id)
+        if request.user == user_to_follow:
+            return Response({"error": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        request.user.following.add(user_to_follow)
+        return Response({"success": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
+
+class UnfollowUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
+        if request.user == user_to_unfollow:
+            return Response({"error": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        request.user.following.remove(user_to_unfollow)
+        return Response({"success": f"You have unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
+    
+
+class UserFeed(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        followed_users = self.request.user.following.all()
+        return Post.objects.filter(author__in=followed_users).order_by('-created_at')
