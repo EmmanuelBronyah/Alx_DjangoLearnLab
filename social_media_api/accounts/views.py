@@ -41,7 +41,7 @@ class ProfileView(APIView):
         return Response(data, status=200)
 
 
-class FollowUser(APIView):
+class FollowUser(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = CustomUser.objects.all()
 
@@ -52,8 +52,9 @@ class FollowUser(APIView):
         
         request.user.following.add(user_to_follow)
         return Response({"success": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
+    
 
-class UnfollowUser(APIView):
+class UnfollowUser(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = CustomUser.objects.all()
 
