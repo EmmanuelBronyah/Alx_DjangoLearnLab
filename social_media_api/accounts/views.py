@@ -72,5 +72,14 @@ class UserFeed(generics.ListAPIView):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        followed_users = self.request.user.following.all()
-        return Post.objects.filter(author__in=followed_users).order_by('-created_at')
+        # Get the current user
+        user = self.request.user
+        following_users = user.following.all()
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+    def list(self, request, *args, **kwargs):
+        # Get the queryset of posts from followed users
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
