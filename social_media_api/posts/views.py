@@ -16,33 +16,41 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-    
-    @action(detail=True, methods=['post'])
-    def like(self, request, pk=None):
-        post = self.get_object()
-        user = request.user
-        if not Like.objects.filter(post=post, user=user).exists():
-            Like.objects.create(post=post, user=user)
+        
+
+class LikePostView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = generics.get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        
+        if created:
+            # Create notification for the post author
             Notification.objects.create(
                 recipient=post.author,
-                actor=user,
-                verb='liked your post',
+                actor=request.user,
+                verb="liked your post",
                 target=post
             )
-            return Response({"message": "Post liked."}, status=status.HTTP_201_CREATED)
-        return Response({"message": "Post already liked."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Post liked"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"message": "Already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'])
-    def unlike(self, request, pk=None):
-        post = self.get_object()
-        user = request.user
-        try:
-            like = Like.objects.get(post=post, user=user)
+
+class UnlikePostView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = generics.get_object_or_404(Post, pk=pk)
+        like = Like.objects.filter(user=request.user, post=post).first()
+        
+        if like:
             like.delete()
-            return Response({"message": "Post unliked."}, status=status.HTTP_200_OK)
-        except Like.DoesNotExist:
-            return Response({"message": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({"message": "Post unliked"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "You haven't liked this post"}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
